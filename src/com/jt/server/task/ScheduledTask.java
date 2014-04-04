@@ -1,5 +1,11 @@
 package com.jt.server.task;
 
+/**
+ * Base Schedule Task.
+ * 
+ * @author Hendrik Stein
+ * 
+ */
 public abstract class ScheduledTask implements Runnable {
     /** The scheduled task name. */
     private String name;
