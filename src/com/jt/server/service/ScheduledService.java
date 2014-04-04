@@ -13,6 +13,7 @@ import com.jt.server.task.Trigger;
 import com.jt.server.task.TriggerTimeUnit;
 
 /**
+ * Scheduled Task service.
  * 
  * @author Hendrik Stein
  * 

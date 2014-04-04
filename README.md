@@ -1,6 +1,8 @@
 Concurrent Scheduler
 ====================
 This is my playground to schedule tasks within a scalable backend cluster. 
+My challange is to not use the Quartz Framework and retain control over the synchronize process.
+My approach uses the distributed data grid Hazelcast to synchronize the scheduler over multiple VMs.
 
 This work is still in progress...
 
