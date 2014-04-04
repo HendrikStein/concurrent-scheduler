@@ -2,6 +2,7 @@ package com.jt.server;
 
 import java.util.Random;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,6 +15,7 @@ import com.jt.server.task.Trigger;
 import com.jt.server.task.TriggerTimeUnit;
 
 /**
+ * Represents an instance.
  * 
  * @author Hendrik Stein
  * 
@@ -28,24 +30,33 @@ public class InstanceStarter {
      * @param args the main arguments
      */
     public static void main(String[] args) {
-        // FIXME hstein Add more configuration options via JVM Parameter
-        if (args == null || args.length != 2) {
-            log.info("usage: InstanceStarter instanceName amounttasks");
+        // Eva
+        String scheduleAmountTasks = System.getProperty("schedule.amouttasks");
+        String scheduleTimeunit = System.getProperty("schedule.timeunit");
+        String scheduleInterval = System.getProperty("schedule.period");
+        String onetimeAmounttasks = System.getProperty("onetime.amounttasks");
+        String nodeName = System.getProperty("node.name");
+        if (StringUtils.isEmpty(scheduleAmountTasks) || StringUtils.isEmpty(scheduleTimeunit)
+                || StringUtils.isEmpty(scheduleInterval) || StringUtils.isEmpty(onetimeAmounttasks)
+                || StringUtils.isEmpty(nodeName)) {
+            log.info("usage: InstanceStarter -Dnode.name=NODE_1 -Dschedule.amouttasks={value} -Dschedule.timeunit=MINUTE -Dschedule.period={value} -Donetime.amounttasks={value}");
             return;
         }
 
         try {
-            int amountTasks = Integer.parseInt(args[1]);
-            String nodeName = args[0];
+            int amountOneTimeTasks = Integer.parseInt(onetimeAmounttasks);
+            int amountScheduledTasks = Integer.parseInt(scheduleAmountTasks);
+            TriggerTimeUnit triggerTimeUnit = TriggerTimeUnit.getInstance(scheduleTimeunit);
+            int triggerInterval = Integer.parseInt(scheduleInterval);
 
             // Startup the hazelcast node
             HazelcastService.startup();
             InstanceStarter starter = new InstanceStarter();
             starter.attachShutdownHook();
-            // starter.runOneTimeTasks(amountTasks, nodeName);
-            starter.runScheduledTasks(nodeName);
-        } catch (NumberFormatException nfe) {
-            log.info("usage: InstanceStarter instanceName amounttasks");
+            starter.runOneTimeTasks(nodeName, amountOneTimeTasks);
+            starter.runScheduledTasks(nodeName, amountScheduledTasks, triggerTimeUnit, triggerInterval);
+        } catch (IllegalArgumentException e) {
+            log.info("usage: InstanceStarter -Dnode.name=NODE_1 -Dschedule.amouttasks={value} -Dschedule.timeunit=MINUTE -Dschedule.period={value} -Donetime.amounttasks={value}");
         } catch (InterruptedException e) {
             log.error("Thread interrupted while sleeping.", e);
             return;
@@ -55,11 +66,11 @@ public class InstanceStarter {
     /**
      * Run one time tasks with hazelcast distributed executor.
      * 
-     * @param amountTasks the amount of tasks
      * @param nodeName the node name
+     * @param amountTasks the amount of tasks
      * @throws InterruptedException if thread is interrupted while sleeping
      */
-    public void runOneTimeTasks(int amountTasks, String nodeName) throws InterruptedException {
+    public void runOneTimeTasks(String nodeName, int amountTasks) throws InterruptedException {
         for (int i = 1; i <= amountTasks; i++) {
 
             // Random duration between 5 and 20 seconds
@@ -76,14 +87,17 @@ public class InstanceStarter {
      * Run scheduled tasks
      * 
      * @param nodeName the node name
+     * @param amountTasks the amount of scheduled tasks
+     * @param triggerTimeUnit the triggerTimeUnit
+     * @param triggerInterval the triggerInterval
      * @throws InterruptedException if thread is interrupted while sleeping
      */
-    public void runScheduledTasks(String nodeName) throws InterruptedException {
-        // log.info("Starting scheduled tasks on node " + nodeName);
-        for (int i = 1; i <= 5; i++) {
+    public void runScheduledTasks(String nodeName, int amountTasks, TriggerTimeUnit triggerTimeUnit, int triggerInterval)
+            throws InterruptedException {
+        for (int i = 1; i <= amountTasks; i++) {
             // Random duration between 5 and 20 seconds
             int durationInSeconds = getRandom(5, 20);
-            Trigger trigger = new Trigger(TriggerTimeUnit.MINUTES, 1);
+            Trigger trigger = new Trigger(triggerTimeUnit, triggerInterval);
             ScheduledEchoTask scheduledTask = new ScheduledEchoTask("Task_No_" + i, trigger, "Message " + i + " from "
                     + nodeName, durationInSeconds);
             log.info("Submitting ScheduledTask no. " + i + " from " + nodeName);
