@@ -13,5 +13,5 @@
 <booleanAttribute key="org.eclipse.jdt.launching.ATTR_USE_START_ON_FIRST_THREAD" value="true"/>
 <stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value="com.jt.server.InstanceStarter"/>
 <stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="Concurrent-Scheduler"/>
-<stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-Dnode.name=NODE_2 -Dschedule.amouttasks=5 -Dschedule.timeunit=MINUTES -Dschedule.period=1 -Donetime.amounttasks=10"/>
+<stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-Dnode.name=NODE_2 -Dschedule.amouttasks=1 -Dschedule.timeunit=MINUTES -Dschedule.period=1 -Donetime.amounttasks=0"/>
 </launchConfiguration>
