@@ -6,6 +6,7 @@ import java.util.concurrent.Callable;
 import com.hazelcast.core.Cluster;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.HazelcastInstanceAware;
+import com.jt.server.util.RandomUtils;
 
 /**
  * Example Echo Task.
@@ -22,27 +23,22 @@ public class EchoTask implements Callable<String>, Serializable, HazelcastInstan
     /** Hazelcast node instance where this echo task is called. */
     private HazelcastInstance hazelcast;
 
-    /** Pretend task duration. */
-    private int taskDurationInSeconds;
-
     /**
      * Create an instance.
      * 
      * @param message the message
-     * @param taskDuration the task duration in seconds
      */
-    public EchoTask(String message, int taskDurationInSeconds) {
+    public EchoTask(String message) {
         this.message = message;
-        this.taskDurationInSeconds = taskDurationInSeconds;
     }
 
     @Override
     public String call() throws Exception {
-        long durationInMillis = taskDurationInSeconds * 1000;
-        Thread.sleep(durationInMillis);
+        int durationInSeconds = RandomUtils.getRandomNumber(5, 20);
+        Thread.sleep(durationInSeconds * 1000);
         Cluster cluster = hazelcast.getCluster();
         return "Echo " + message + " from " + cluster.getLocalMember() + ". Echo Task duration "
-                + taskDurationInSeconds + " seconds.";
+                + durationInSeconds + " seconds.";
     }
 
     @Override

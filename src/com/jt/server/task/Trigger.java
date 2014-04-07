@@ -1,6 +1,5 @@
 package com.jt.server.task;
 
-
 /**
  * The {@link ScheduledTask} Trigger Intervall.
  * 
@@ -42,5 +41,10 @@ public class Trigger {
      */
     public long getInterval() {
         return interval;
+    }
+
+    @Override
+    public String toString() {
+        return "Trigger [timeUnit=" + timeUnit + ", interval=" + interval + "]";
     }
 }
