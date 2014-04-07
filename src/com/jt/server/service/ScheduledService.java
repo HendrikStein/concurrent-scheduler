@@ -52,22 +52,25 @@ public class ScheduledService {
             Duration difference = new Duration(new DateTime(lookupExecutionDate), DateTime.now());
             switch (timeUnit) {
             case DAYS:
-                if (difference.toStandardDays().getDays() > period) {
+                if (difference.toStandardDays().getDays() >= period) {
                     return true;
                 }
                 break;
             case HOURS:
-                if (difference.toStandardHours().getHours() > period) {
+                if (difference.toStandardHours().getHours() >= period) {
                     return true;
                 }
+                break;
             case MINUTES:
-                if (difference.toStandardMinutes().getMinutes() > period) {
+                if (difference.toStandardMinutes().getMinutes() >= period) {
                     return true;
                 }
+                break;
             case SECONDS:
-                if (difference.toStandardSeconds().getSeconds() > period) {
+                if (difference.toStandardSeconds().getSeconds() >= period) {
                     return true;
                 }
+                break;
             }
             return false;
         }
